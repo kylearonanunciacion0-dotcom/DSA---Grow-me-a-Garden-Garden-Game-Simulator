@@ -3,62 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Global Referrer Policy to fix image loading from wiki.gg -->
+<meta name="referrer" content="no-referrer">
 <title>🌷 Grow me a Garden 🌷</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fredoka:wght@600;700&family=Sacramento&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&family=Sacramento&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  body{font-family:'Inter',sans-serif;}
+  body{
+    font-family:'Fredoka',sans-serif;
+    background-color: #f7e8d3;
+    background-image: radial-gradient(#e5cca4 1px, transparent 1px);
+    background-size: 16px 16px;
+    color: #4a3b32;
+  }
   .display{font-family:'Baloo 2',cursive;}
   .mono{font-family:'JetBrains Mono',monospace;}
-  .feminine-title{font-family:'Sacramento',cursive;font-weight:700;color:#ec4899;text-shadow:0 1px 2px rgba(236,72,153,0.15);line-height:1.4;padding:0.05em 0.25em 0.2em;overflow:visible;}
-  .ready-badge{font-family:'Fredoka',sans-serif;font-weight:700;font-size:10px;line-height:1;letter-spacing:.06em;color:#be185d;background:#fce7f3;border:1px solid #f9a8d4;border-radius:999px;padding:2px 6px;white-space:nowrap;box-shadow:0 1px 2px rgba(236,72,153,.25);animation:readybounce 1.2s ease-in-out infinite;}
+  .mistria-title{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    color:#7c3aed;
+    text-shadow: 2px 2px 0px #fef08a, -1px -1px 0px #fff;
+    line-height:1.2;
+  }
+  .mistria-card {
+    background-color: #fffbf2;
+    border: 3px solid #b45309;
+    box-shadow: inset 0 0 0 2px #fde68a, 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  .mistria-header {
+    background-color: #fef3c7;
+    border-bottom: 3px solid #b45309;
+  }
+  .mistria-btn {
+    background-color: #f59e0b;
+    border: 2px solid #78350f;
+    box-shadow: inset 0 2px 0 #fde68a, 0 2px 0 #78350f;
+    color: #fff;
+    font-weight: 700;
+    transition: transform 0.05s, background-color 0.15s;
+  }
+  .mistria-btn:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 #fde68a;
+  }
+  .mistria-btn-secondary {
+    background-color: #a7f3d0;
+    border: 2px solid #065f46;
+    box-shadow: inset 0 2px 0 #ecfdf5, 0 2px 0 #065f46;
+    color: #064e3b;
+    font-weight: 700;
+  }
+  .mistria-btn-purple {
+    background-color: #c084fc;
+    border: 2px solid #581c87;
+    box-shadow: inset 0 2px 0 #f3e8ff, 0 2px 0 #581c87;
+    color: #3b0764;
+    font-weight: 700;
+  }
+  .ready-badge{
+    font-family:'Fredoka',sans-serif;
+    font-weight:700;
+    font-size:10px;
+    line-height:1;
+    color:#be185d;
+    background:#fce7f3;
+    border:1px solid #f9a8d4;
+    border-radius:999px;
+    padding:2px 6px;
+    white-space:nowrap;
+    box-shadow:0 1px 2px rgba(236,72,153,.25);
+    animation:readybounce 1.2s ease-in-out infinite;
+  }
   @keyframes readybounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-  .feminine-title .sub{font-family:'Inter',sans-serif;font-weight:400;text-shadow:none;}
   .tile{transition:background .15s,transform .1s;}
-  .tile:hover{transform:scale(1.02);}
-  .toolcard{transition:transform .1s,border-color .15s;}
-  .toolcard.selected{border-color:#ec4899;box-shadow:0 0 0 2px #f9a8d4;}
+  .tile:hover{transform:scale(1.03); z-index: 10;}
+  .toolcard{
+    transition:transform .1s, border-color .15s, background-color .15s;
+    background-color: #fffdf5;
+    border: 2px solid #d97706;
+  }
+  .toolcard.selected{
+    border-color:#7c3aed;
+    background-color: #f3e8ff;
+    box-shadow:0 0 0 3px #c084fc;
+  }
   .badge-btn{transition:transform .1s;}
   .badge-btn:active{transform:scale(.94);}
-  .hpbar,.growthbar{height:4px;border-radius:2px;overflow:hidden;background:#fbe4ee;}
+  .hpbar,.growthbar{height:5px;border-radius:3px;overflow:hidden;background:#fef3c7; border: 1px solid #b45309;}
   .hpfill{height:100%;background:#ef4444;transition:width .2s;}
   .growthfill{height:100%;background:#10b981;transition:width .2s;}
   .needbadge{font-size:12px;line-height:1;}
-  ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-thumb{background:#f9a8d4;border-radius:4px;}
+  ::-webkit-scrollbar{width:8px;} 
+  ::-webkit-scrollbar-thumb{background:#b45309;border-radius:4px;}
+  ::-webkit-scrollbar-track{background:#fef3c7;}
   .loading-dot{animation:pulse 1.4s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
   #toast{transition:opacity .3s, transform .3s;}
-  .lockbanner{background:#fff1f2;border:1px solid #fda4af;color:#9f1239;}
-  .unlockbanner{background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;}
+  .lockbanner{background:#fee2e2;border:2px solid #ef4444;color:#991b1b;}
+  .unlockbanner{background:#dcfce7;border:2px solid #22c55e;color:#166534;}
+  
+  /* BST Node Visualizer Styling */
+  .bst-node {
+    border: 2px solid #78350f;
+    background-color: #fef3c7;
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #78350f;
+    box-shadow: 0 2px 0 #78350f;
+    transition: all 0.2s ease;
+  }
+  .bst-node.active-node {
+    background-color: #f43f5e;
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 8px #f43f5e;
+  }
 </style>
 </head>
-<body class="min-h-screen bg-pink-50 text-stone-800">
+<body class="min-h-screen">
 
 <!-- Pyodide Loader Overlay -->
-<div id="loading" class="fixed inset-0 z-[100] flex flex-col items-center justify-center min-h-screen gap-3" style="background-color:#eefbf6;">
-  <h1 class="feminine-title text-4xl sm:text-5xl text-pink-500 font-bold flex items-center justify-center gap-2 drop-shadow-sm tracking-wide">
+<div id="loading" class="fixed inset-0 z-[100] flex flex-col items-center justify-center min-h-screen gap-3" style="background-color:#fef3c7;">
+  <h1 class="mistria-title text-4xl sm:text-5xl flex items-center justify-center gap-2 drop-shadow-sm tracking-wide">
     🌷 Grow me a Garden 🌷
   </h1>
-  <div class="loading-dot" id="loading-text" style="font-family:'JetBrains Mono',monospace;color:#94a3b8;font-size:0.875rem;">Initializing Pyodide (WebAssembly Python)...</div>
+  <div class="loading-dot mono" id="loading-text" style="color:#b45309;font-size:0.875rem;">Initializing Pyodide (WebAssembly Python)...</div>
 </div>
 
-<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-pink-700 text-white text-sm px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none z-[90]"></div>
+<div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-amber-900 text-amber-100 text-sm px-4 py-2 rounded-xl border-2 border-amber-600 shadow-xl opacity-0 pointer-events-none z-[90] font-bold"></div>
 
 <!-- TOP HEADER & RESOURCE BAR -->
-<header class="bg-pink-100 border-b border-pink-200 px-4 py-3 sticky top-0 z-20">
-  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1 overflow-visible">
+<header class="mistria-header px-4 py-3 sticky top-0 z-20 shadow-md">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 overflow-visible">
     <div class="flex-shrink-0">
-      <h1 class="feminine-title text-4xl sm:text-5xl text-pink-500 font-bold flex items-center justify-center gap-2 drop-shadow-sm tracking-wide whitespace-nowrap py-1 px-1">
+      <h1 class="mistria-title text-3xl sm:text-4xl flex items-center justify-center gap-2 tracking-wide whitespace-nowrap">
         🌷 Grow me a Garden 🌷
       </h1>
     </div>
     <div id="resource-bar" class="flex flex-row items-center gap-2 text-xs mono overflow-x-auto whitespace-nowrap scrollbar-none py-1 min-w-0 max-w-full">
-      <span class="text-pink-400 italic">🔒 Run Topic 1 to unlock resources</span>
+      <span class="text-amber-800 italic font-semibold">🔒 Run Topic 1 to unlock resources</span>
     </div>
-    <button id="open-library-btn" class="flex-shrink-0 bg-white text-pink-700 border border-pink-200 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-pink-50 whitespace-nowrap">
+    <button id="open-library-btn" class="flex-shrink-0 mistria-btn px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs sm:text-sm">
       <i data-lucide="book-open" class="w-4 h-4"></i> Aklat ng Halaman
     </button>
   </div>
@@ -66,71 +157,80 @@
 
 <!-- TOOLBAR & IN-GAME ACTION TRIGGERS -->
 <div class="max-w-7xl mx-auto px-4 pt-3">
-  <div id="toolbar" class="grid grid-cols-5 sm:grid-cols-10 gap-2">
-    <div class="col-span-5 sm:col-span-10 text-xs text-pink-400 mono bg-white border border-dashed border-pink-200 rounded-lg p-3 text-center">
-      🔒 Run <b>Topic 3</b> in the Student Code Editor to unlock the Seed Bag, Care Tools, and Sunlight.
+  <div id="toolbar" class="grid grid-cols-4 sm:grid-cols-13 gap-1.5">
+    <div class="col-span-4 sm:col-span-13 text-xs text-amber-800 mono bg-amber-100 border-2 border-dashed border-amber-400 rounded-lg p-3 text-center font-bold">
+      🔒 Run <b>Topic 3</b> in the Student Code Editor to unlock the Seed Hotbar & Care Tools.
     </div>
   </div>
-  <div id="mode-banner" class="mono text-xs text-pink-700 mt-1 hidden"></div>
+  <div id="mode-banner" class="mono text-xs text-amber-900 font-bold mt-2 bg-amber-200/60 p-1.5 rounded-md border border-amber-400 hidden"></div>
   
   <!-- DSA Action Trigger Buttons -->
   <div class="flex flex-wrap gap-2 mt-2">
-    <label id="topic7-ui" title="Uses Graph Adjacency Matrix to apply care actions to all 8 neighboring soil tiles (3x3 area) simultaneously." class="hidden text-[11px] mono bg-amber-100 border border-amber-300 text-amber-800 px-2 py-1 rounded-full items-center gap-1 cursor-pointer hover:bg-amber-200">
-      <input type="checkbox" id="splash-toggle" class="accent-amber-600"> 🌊 Group Care <span class="text-[10px] text-amber-700">(Topic 7 Graph Adjacency Matrix)</span>
+    <label id="topic7-ui" title="Uses Graph Adjacency Matrix to apply care actions to all 8 neighboring soil tiles (3x3 area) simultaneously." class="hidden text-xs mono mistria-btn-purple px-3 py-1 rounded-full flex items-center gap-1.5 cursor-pointer">
+      <input type="checkbox" id="splash-toggle" class="accent-purple-600"> 🌊 Group Care <span class="text-[10px] text-purple-900">(Graph Adjacency Matrix)</span>
     </label>
-    <button id="topic10-ui" onclick="planRoute()" title="Uses Greedy Sorting & Grid Pathfinding to map out the shortest route across the farm." class="hidden text-[11px] mono bg-sky-100 border border-sky-300 text-sky-800 px-2.5 py-1 rounded-full hover:bg-sky-200">
-      🧭 Irrigation Path <span class="text-[10px] text-sky-700">(Topic 10 Greedy Sorting & Pathfinding)</span>
+    <button id="topic10-ui" onclick="planRoute()" title="Uses Greedy Sorting & Grid Pathfinding to map out the shortest route across the farm." class="hidden text-xs mono mistria-btn-secondary px-3 py-1 rounded-full">
+      🧭 Irrigation Path <span class="text-[10px] text-emerald-800">(Greedy Pathfinding)</span>
     </button>
-    <button id="topic11-ui" onclick="bestPlan()" title="Runs Dynamic Programming to evaluate current Pera and available farm space." class="hidden text-[11px] mono bg-emerald-100 border border-emerald-300 text-emerald-800 px-2.5 py-1 rounded-full hover:bg-emerald-200">
-      💡 Golden Plan-ter <span class="text-[10px] text-emerald-700">(Topic 11 Dynamic Programming Knapsack)</span>
+    <button id="topic11-ui" onclick="bestPlan()" title="Runs Dynamic Programming to evaluate current Pera and available farm space." class="hidden text-xs mono mistria-btn px-3 py-1 rounded-full">
+      💡 Golden Plan-ter <span class="text-[10px] text-amber-900">(DP Knapsack)</span>
     </button>
   </div>
 </div>
 
 <!-- MODE NAVIGATION TABS -->
 <div class="max-w-7xl mx-auto px-4 pt-3">
-  <div class="flex bg-white p-1 rounded-xl border border-pink-200 w-fit mb-3">
-    <button id="tab-game" onclick="switchTab('game')" class="px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 bg-pink-100 text-pink-700"><i data-lucide="gamepad-2" class="w-3.5 h-3.5"></i>Interactive Garden Game</button>
-    <button id="tab-code" onclick="switchTab('code')" class="px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 text-pink-400"><i data-lucide="code" class="w-3.5 h-3.5"></i>Student Code Editor (Topics 1–11)</button>
+  <div class="flex bg-amber-200/80 p-1.5 rounded-xl border-2 border-amber-600 w-fit mb-2 gap-2">
+    <button id="tab-game" onclick="switchTab('game')" class="px-4 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5 bg-amber-500 text-white shadow"><i data-lucide="gamepad-2" class="w-4 h-4"></i>Interactive Garden Game</button>
+    <button id="tab-code" onclick="switchTab('code')" class="px-4 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5 text-amber-800 hover:bg-amber-300/50"><i data-lucide="code" class="w-4 h-4"></i>Student Code Editor (Topics 1–11)</button>
   </div>
 </div>
 
 <!-- CODE EDITOR TAB -->
 <div id="view-code" class="max-w-7xl mx-auto px-4 pb-4 hidden flex-col gap-2">
-  <div class="bg-rose-50/60 border border-pink-200 rounded-xl p-4">
-    <h2 class="feminine-title text-3xl text-pink-500 font-bold mb-2 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-pink-500"></i>Student Code Editor <span class="sub text-xs text-pink-400">(DSA Lab)</span></h2>
-    <select id="topic-selector" onchange="loadTopic()" class="w-full bg-white border border-pink-200 rounded-lg p-2.5 mb-2 text-sm font-semibold text-pink-800"></select>
-    <div id="lock-banner" class="lockbanner text-xs font-semibold rounded-lg px-3 py-2 mb-2 flex items-center gap-2"><i data-lucide="lock" class="w-3.5 h-3.5"></i><span id="lock-text"></span></div>
-    <textarea id="code-editor" class="w-full bg-white border border-pink-200 rounded-lg p-3 mono text-xs leading-relaxed h-64 resize-y" spellcheck="false"></textarea>
-    <button onclick="runPythonCode()" class="mt-3 bg-pink-500 hover:bg-pink-400 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 w-full sm:w-auto sm:px-6">
-      <i data-lucide="play" class="w-4 h-4"></i> Run Python Code & Unlock Feature
-    </button>
-    <div id="editor-output" class="mt-3 bg-stone-900 text-emerald-300 rounded-lg p-3 text-[11px] max-h-40 overflow-auto mono whitespace-pre-wrap"></div>
+  <div class="mistria-card p-4">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <h2 class="mistria-title text-2xl flex items-center gap-2"><i data-lucide="terminal" class="w-5 h-5 text-purple-600"></i>Student Code Editor <span class="text-xs text-amber-800 font-normal">(DSA Lab)</span></h2>
+      <button onclick="runAllPythonCodes()" class="mistria-btn-purple px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg hover:brightness-105">
+        <i data-lucide="zap" class="w-4 h-4 fill-current"></i> ⚡ Run All Topics & Unlock Everything
+      </button>
+    </div>
+    
+    <select id="topic-selector" onchange="loadTopic()" class="w-full bg-amber-50 border-2 border-amber-600 rounded-lg p-2.5 mb-2 text-sm font-bold text-amber-900"></select>
+    <div id="lock-banner" class="lockbanner text-xs font-bold rounded-lg px-3 py-2 mb-2 flex items-center gap-2"><i data-lucide="lock" class="w-4 h-4"></i><span id="lock-text"></span></div>
+    <textarea id="code-editor" class="w-full bg-stone-900 text-amber-200 border-2 border-amber-700 rounded-lg p-3 mono text-xs leading-relaxed h-64 resize-y" spellcheck="false"></textarea>
+    
+    <div class="flex flex-wrap gap-2 mt-3">
+      <button onclick="runPythonCode()" class="mistria-btn px-6 py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+        <i data-lucide="play" class="w-4 h-4"></i> Run Selected Code & Unlock Topic
+      </button>
+    </div>
+    <div id="editor-output" class="mt-3 bg-stone-950 text-emerald-400 border-2 border-amber-800 rounded-lg p-3 text-xs max-h-40 overflow-auto mono whitespace-pre-wrap"></div>
   </div>
 </div>
 
 <!-- MAIN STAGE / INTERACTIVE GAME TAB -->
-<div id="view-game" class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4">
+<div id="view-game" class="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
 
   <!-- MAIN FIELD & LIFECYCLE BANNER -->
   <div class="flex flex-col gap-3 w-full">
     <!-- 5x9 Garden Matrix -->
-    <div id="board" class="relative bg-rose-100 border-4 border-pink-300 rounded-xl p-3 w-full">
+    <div id="board" class="relative mistria-card p-4 w-full bg-amber-100/90">
       <div id="hazard-overlay" class="absolute inset-0 rounded-lg bg-red-500/0 pointer-events-none transition-colors duration-300"></div>
       <div id="grid" class="relative grid grid-cols-9 grid-rows-5 gap-2 w-full"></div>
     </div>
     
     <!-- Plant Lifecycle Hierarchy Banner -->
-    <div class="bg-white border border-pink-200 rounded-xl p-3 w-full shadow-sm">
-      <div class="text-xs font-bold text-pink-800 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+    <div class="mistria-card p-3 w-full">
+      <div class="text-xs font-bold text-amber-900 mb-2 uppercase tracking-wide flex items-center gap-1.5">
         <span>🌱 PLANT LIFECYCLE & NEED MONITOR (Growth Rate Depends on 💧 Water, ☀️ Sunlight, 🧪 Fertilizer, 🦴 Bone Meal, 🏡 Greenhouse)</span>
       </div>
       <div class="flex flex-wrap items-center justify-between gap-2 text-xs mono">
-        <span class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-full font-semibold shadow-sm">🌱 Seedling (Initial)</span>
-        <span class="text-pink-300 font-bold">── Balanced Needs ──&gt;</span>
-        <span class="bg-pink-100 text-pink-800 border border-pink-300 px-3 py-1.5 rounded-full font-semibold shadow-sm">🌼 🌸 🌺 🏵️ Mature Flower (100% Growth)</span>
-        <span class="text-pink-300 font-bold">── Neglect / Disaster ──&gt;</span>
-        <span class="bg-stone-200 text-stone-600 border border-stone-400 px-3 py-1.5 rounded-full font-semibold shadow-sm">🪾 Dying State (Withered)</span>
+        <span class="bg-emerald-100 text-emerald-900 border border-emerald-400 px-3 py-1 rounded-full font-bold shadow-sm">🌱 Seedling</span>
+        <span class="text-amber-700 font-bold">── Balanced Care ──&gt;</span>
+        <span class="bg-amber-200 text-amber-900 border border-amber-500 px-3 py-1 rounded-full font-bold shadow-sm">🌸 🌷 🌼 🌻 🪻 🌺 ❄️ 🪷 Mature Flower (100%)</span>
+        <span class="text-amber-700 font-bold">── Neglect ──&gt;</span>
+        <span class="bg-stone-300 text-stone-800 border border-stone-500 px-3 py-1 rounded-full font-bold shadow-sm">🌾 Withered State</span>
       </div>
     </div>
   </div>
@@ -138,78 +238,96 @@
   <!-- SIDEBAR PANELS -->
   <div class="space-y-4">
     <!-- Flower Vase -->
-    <div class="bg-rose-50/60 border border-pink-200 rounded-xl p-3 flex flex-col items-center">
+    <div class="mistria-card p-3 flex flex-col items-center">
       <div class="text-3xl mb-1">🏺</div>
-      <div class="text-xs font-bold text-pink-700 mb-2">Flower Vase</div>
-      <button id="topic8-ui" onclick="sortVase()" class="hidden text-[10px] mono bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full mb-1 hover:bg-pink-200">⇅ Sort (Topic 8 Quicksort)</button>
+      <div class="text-xs font-bold text-amber-900 mb-1">Flower Vase</div>
+      <button id="topic8-ui" onclick="sortVase()" class="hidden text-[11px] mono mistria-btn-purple px-3 py-0.5 rounded-full mb-1">⇅ Sort (Topic 8 Quicksort)</button>
       <div id="vase-list" class="flex flex-wrap gap-1 justify-center mb-2 max-h-24 overflow-y-auto w-full"></div>
-      <div class="text-[11px] text-pink-400 mono">Earned</div>
-      <div id="vase-total" class="text-sm font-bold text-pink-600 mono">₱0</div>
+      <div class="text-[11px] text-amber-800 mono font-bold">Earned</div>
+      <div id="vase-total" class="text-base font-extrabold text-amber-900 mono">₱0</div>
     </div>
 
     <!-- Climate Queue -->
-    <div class="bg-rose-50/60 border border-pink-200 rounded-xl p-3">
-      <h2 class="feminine-title text-2xl text-pink-500 font-bold mb-2 flex items-center gap-2"><i data-lucide="cloud-lightning" class="w-4 h-4 text-rose-400"></i>Ulat Panahon <span class="sub text-[10px] text-pink-400">Climate Queue · FIFO</span></h2>
+    <div class="mistria-card p-3">
+      <h2 class="mistria-title text-xl mb-2 flex items-center gap-2"><i data-lucide="cloud-lightning" class="w-4 h-4 text-amber-700"></i>Ulat Panahon <span class="text-[10px] font-normal text-amber-800">Climate Queue · FIFO</span></h2>
       <div id="climate-list" class="flex flex-col gap-1 mb-2 max-h-40 overflow-y-auto"></div>
       <div class="grid grid-cols-2 gap-2">
-        <button id="add-hazard-btn" class="text-xs py-1.5 rounded bg-rose-100 border border-rose-300 text-rose-700 hover:bg-rose-200 font-medium">+ Add Sakuna</button>
-        <button id="process-hazard-btn" class="text-xs py-1.5 rounded bg-pink-100 border border-pink-300 text-pink-700 hover:bg-pink-200 font-medium">Process</button>
+        <button id="add-hazard-btn" class="text-xs py-1.5 rounded-lg bg-rose-200 border-2 border-rose-600 text-rose-900 hover:bg-rose-300 font-bold">+ Add Sakuna</button>
+        <button id="process-hazard-btn" class="text-xs py-1.5 rounded-lg mistria-btn text-white font-bold">Process</button>
       </div>
     </div>
 
     <!-- Action History Stack -->
-    <div class="bg-stone-800 border border-pink-300/30 rounded-xl p-3">
-      <h2 class="feminine-title text-2xl text-pink-500 font-bold mb-2 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-lime-400"></i>Kasaysayan <span class="sub text-[10px] text-stone-400">Action History · LIFO</span></h2>
-      <div id="action-list" class="mono text-[11px] text-lime-300 space-y-0.5 max-h-40 overflow-y-auto mb-2"></div>
+    <div class="bg-stone-900 border-2 border-amber-700 rounded-xl p-3 shadow-md">
+      <h2 class="mistria-title text-xl text-amber-400 mb-2 flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-lime-400"></i>Kasaysayan <span class="text-[10px] font-normal text-stone-400">Action History · LIFO</span></h2>
+      <div id="action-list" class="mono text-[11px] text-lime-300 space-y-0.5 max-h-36 overflow-y-auto mb-2"></div>
       <div id="topic9-ui" class="hidden flex gap-1 mb-2">
-        <input id="history-search-input" type="text" placeholder="Find action..." class="flex-1 bg-stone-700 border border-stone-600 rounded px-2 py-1 text-[11px] text-lime-100">
-        <button onclick="searchHistory()" class="bg-lime-600 text-white text-[11px] px-2 rounded">🔎</button>
+        <input id="history-search-input" type="text" placeholder="Find action..." class="flex-1 bg-stone-800 border border-amber-700 rounded px-2 py-1 text-[11px] text-lime-100">
+        <button onclick="searchHistory()" class="bg-lime-600 text-white text-[11px] px-2 rounded font-bold">🔎</button>
       </div>
-      <button id="undo-btn" class="w-full text-xs py-1.5 rounded bg-lime-500/10 border border-lime-500/30 text-lime-300 hover:bg-lime-500/20 font-semibold">↶ Undo Last Action</button>
+      <button id="undo-btn" class="w-full text-xs py-1.5 rounded-lg bg-lime-900/60 border border-lime-500 text-lime-300 hover:bg-lime-800/80 font-bold">↶ Undo Last Action</button>
     </div>
 
     <!-- Python Log Console -->
-    <div class="bg-rose-50/60 border border-pink-200 rounded-xl p-3">
-      <h2 class="feminine-title text-2xl text-pink-500 font-bold mb-2 flex items-center gap-2"><i data-lucide="code" class="w-4 h-4 text-pink-400"></i>Python Console</h2>
-      <div id="console" class="mono text-[10px] text-rose-700/80 space-y-0.5 max-h-28 overflow-y-auto"></div>
+    <div class="mistria-card p-3">
+      <h2 class="mistria-title text-xl mb-2 flex items-center gap-2"><i data-lucide="code" class="w-4 h-4 text-purple-700"></i>Python Console</h2>
+      <div id="console" class="mono text-[10px] text-amber-900 bg-amber-50 p-2 rounded border border-amber-300 space-y-0.5 max-h-28 overflow-y-auto"></div>
     </div>
   </div>
 </div>
 
 <!-- AKLAT NG HALAMAN MODAL -->
-<div id="library-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 p-4">
-  <div class="bg-pink-50 border border-pink-200 rounded-xl max-w-2xl w-full p-5 max-h-[85vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="feminine-title text-4xl text-pink-500 font-bold drop-shadow-sm tracking-wide">📖 Aklat ng Halaman</h2>
-      <button id="close-library-btn" class="text-pink-300 hover:text-pink-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+<div id="library-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+  <div class="mistria-card max-w-3xl w-full p-5 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-4 border-b-2 border-amber-300 pb-2">
+      <h2 class="mistria-title text-3xl flex items-center gap-2">📖 Aklat ng Halaman</h2>
+      <button id="close-library-btn" class="text-amber-800 hover:text-rose-600 font-bold"><i data-lucide="x" class="w-6 h-6"></i></button>
     </div>
 
-    <!-- TOP LOOKUP PANELS -->
-    <div id="topic5-ui" class="hidden mb-3 bg-pink-100/70 border border-pink-200 rounded-lg p-3">
-      <h3 class="text-xs font-bold text-pink-700 mb-1">🔍 Search by Price (Binary Search Tree) <span class="text-[10px] font-normal text-pink-400">Topic 5</span></h3>
-      <div class="flex gap-2">
-        <input id="bst-input" type="number" placeholder="₱ cost" class="flex-1 border border-pink-200 rounded px-2 py-1 text-xs">
-        <button onclick="bstSearch()" class="bg-pink-500 text-white text-xs px-3 py-1 rounded font-semibold hover:bg-pink-400">Search BST</button>
+    <!-- TOP LOOKUP & BST VISUALIZER PANELS -->
+    <div id="topic5-ui" class="hidden mb-4 bg-amber-100/90 border-2 border-amber-600 rounded-xl p-3">
+      <h3 class="text-xs font-bold text-amber-900 mb-1 flex items-center justify-between">
+        <span>🔍 Search by Price (Binary Search Tree) Topic 5</span>
+      </h3>
+      <div class="flex gap-2 mb-2">
+        <input id="bst-input" type="number" placeholder="₱ seed cost" class="flex-1 border-2 border-amber-600 rounded px-2 py-1 text-xs bg-white">
+        <button onclick="bstSearch()" class="mistria-btn text-xs px-3 py-1 rounded font-bold">Search BST</button>
       </div>
-      <div id="bst-result" class="text-[11px] mono text-pink-700 mt-1"></div>
+      <div id="bst-result" class="text-[11px] mono text-amber-900 font-bold mb-3"></div>
+
+      <!-- VISUAL BST GRAPH REPRESENTATION -->
+      <div class="bg-amber-50 border-2 border-amber-400 rounded-lg p-3">
+        <div class="text-[11px] font-bold text-amber-800 mb-2 flex items-center justify-between">
+          <span>🌳 Visual Binary Search Tree (Ordered by Seed Cost)</span>
+          <div class="flex gap-1">
+            <button onclick="runBstTraversal('inorder')" class="text-[10px] mistria-btn-purple px-2 py-0.5 rounded">In-Order</button>
+            <button onclick="runBstTraversal('preorder')" class="text-[10px] mistria-btn-purple px-2 py-0.5 rounded">Pre-Order</button>
+            <button onclick="runBstTraversal('postorder')" class="text-[10px] mistria-btn-purple px-2 py-0.5 rounded">Post-Order</button>
+          </div>
+        </div>
+        <div id="bst-visual-container" class="flex flex-col items-center gap-3 py-2 overflow-x-auto">
+          <!-- Dynamically Rendered Tree Diagram -->
+        </div>
+        <div id="traversal-output" class="text-[11px] mono font-bold text-purple-900 mt-2 bg-purple-100 p-1.5 rounded border border-purple-300 hidden"></div>
+      </div>
     </div>
 
-    <div id="topic6-ui" class="hidden mb-4 bg-rose-100/70 border border-rose-200 rounded-lg p-3">
-      <h3 class="text-xs font-bold text-rose-700 mb-1">⚡ Quick Lookup (Hash Table) <span class="text-[10px] font-normal text-rose-400">Topic 6</span></h3>
+    <div id="topic6-ui" class="hidden mb-4 bg-amber-100/90 border-2 border-amber-600 rounded-xl p-3">
+      <h3 class="text-xs font-bold text-amber-900 mb-1">⚡ Quick Lookup (Hash Table) <span class="text-[10px] font-normal text-amber-800">Topic 6</span></h3>
       <div class="flex gap-2">
-        <input id="hash-input" type="text" placeholder="Plant name" class="flex-1 border border-rose-200 rounded px-2 py-1 text-xs">
-        <button onclick="hashLookup()" class="bg-rose-500 text-white text-xs px-3 py-1 rounded font-semibold hover:bg-rose-400">Lookup</button>
+        <input id="hash-input" type="text" placeholder="Plant name" class="flex-1 border-2 border-amber-600 rounded px-2 py-1 text-xs bg-white">
+        <button onclick="hashLookup()" class="mistria-btn text-xs px-3 py-1 rounded font-bold">Lookup</button>
       </div>
-      <div id="hash-result" class="text-[11px] mono text-rose-700 mt-1"></div>
+      <div id="hash-result" class="text-[11px] mono text-amber-900 font-bold mt-1"></div>
     </div>
 
     <!-- FLOWER CATALOG LIST -->
     <div id="library-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4"></div>
 
     <!-- TREE STRUCTURE OUTPUT -->
-    <div id="topic4-ui" class="hidden bg-rose-50 border border-rose-200 rounded-lg p-3">
-      <h3 class="text-xs font-bold text-rose-700 mb-1">🌳 Plant Family Tree <span class="text-[10px] font-normal text-rose-400">Topic 4 — Hierarchical Trees</span></h3>
-      <pre id="tree-output" class="text-[11px] mono text-rose-800 whitespace-pre-wrap"></pre>
+    <div id="topic4-ui" class="hidden bg-amber-50 border-2 border-amber-600 rounded-xl p-3">
+      <h3 class="text-xs font-bold text-amber-900 mb-1">🌳 Plant Family Tree <span class="text-[10px] font-normal text-amber-800">Topic 4 — Hierarchical Trees</span></h3>
+      <pre id="tree-output" class="text-[11px] mono text-amber-900 whitespace-pre-wrap bg-amber-100/60 p-2 rounded border border-amber-300"></pre>
     </div>
   </div>
 </div>
@@ -217,34 +335,111 @@
 <script>
 lucide.createIcons();
 
+/* SEASONAL FLOWERS WITH WIKI STAGE IMAGES */
 const PLANTS = [
-  {name:"Sampaguita", emoji:"🌼", cost:25, water:10, ability:"Light feeder. Requires steady sunlight & water.", weak:"Fragile against typhoon winds."},
-  {name:"Gumamela",   emoji:"🌺", cost:50, water:15, ability:"Heavy feeder. Requires high sunlight & fertilizer.", weak:"Weak to Amihan frost."},
-  {name:"Ilang-Ilang", emoji:"🌸", cost:40, water:12, ability:"Sunsensitive bloomer. Thrives with balanced care.", weak:"Weak to ashfall."},
-  {name:"Santan",     emoji:"🏵️", cost:60, water:18, ability:"High health defender. Needs frequent Bone Meal.", weak:"Needs frequent Bone Meal."},
+  // SPRING
+  {
+    name:"Lilac", season:"Spring", cost:25, water:10, 
+    ability:"Light feeder. Requires steady sunlight & water.", weak:"Fragile against typhoon winds.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Lilac_seed.png?18a44c",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Lilac_stage0.png?eab133",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Lilac_stage2.png?367d78",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Lilac_stage4.png?20cc23",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  {
+    name:"Tulip", season:"Spring", cost:35, water:12,
+    ability:"Spring favorite. Yields moderate harvest profits.", weak:"Weak against frost.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Tulip_seed.png?a4a9e8",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Tulip_stage0.png?2e38d7",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Tulip_stage2.png?4d7f55",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Tulip_stage4.png?2c5bf0",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  // SUMMER
+  {
+    name:"Marigold", season:"Summer", cost:45, water:14,
+    ability:"Bright summer bloom. Resilient to pests.", weak:"Needs sunlight.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Marigold_seed.png?3a7b1c",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Marigold_stage0.png?c3f5f5",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Marigold_stage3.png?231f27",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Marigold_stage4.png?68cf40",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  {
+    name:"Sunflower", season:"Summer", cost:60, water:18,
+    ability:"High health defender. Thrives under intense sun.", weak:"Needs frequent Bone Meal.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Sunflower_seed.png?501da5",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Sunflower_stage0.png?408bf4",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Sunflower_stage3.png?9ec086",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Sunflower_stage4.png?4864ec",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  // FALL
+  {
+    name:"Celosia", season:"Fall", cost:50, water:15,
+    ability:"Vibrant fall perennial. Responds well to fertilizer.", weak:"Weak to Ashfall.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Celosia_seed.png?499026",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Celosia_stage0.png?82e0d5",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Celosia_stage3.png?977f7d",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Celosia_stage4.png?6d7af8",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  {
+    name:"Chrysanthemum", season:"Fall", cost:55, water:16,
+    ability:"Classic autumnal bloom. Long-lasting beauty.", weak:"Sensitive to drought.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Chrysanthemum_seed.png?fe13a3",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Chrysanthemum_stage0.png?3e2736",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Chrysanthemum_stage3.png?9a88e7",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Chrysanthemum_stage4.png?a73dbf",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  // WINTER
+  {
+    name:"Frost Lily", season:"Winter", cost:70, water:20,
+    ability:"Rare winter lily. Commands high payout when harvested.", weak:"Highly fragile.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Frost_lily_seed.png?656054",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Frost_lily_stage0.png?accc1e",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Frost_lily_stage3.png?78dae4",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Frost_lily_stage4.png?3fa8f0",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  },
+  {
+    name:"Jasmine", season:"Winter", cost:40, water:12,
+    ability:"Fragrant bloomer. Thrives with balanced winter care.", weak:"Weak to tornadoes.",
+    seed_img:"https://fieldsofmistria.wiki.gg/images/Jasmine_seed.png?6233d3",
+    stage0_img:"https://fieldsofmistria.wiki.gg/images/Jasmine_stage0.png?761091",
+    stage2_img:"https://fieldsofmistria.wiki.gg/images/Jasmine_stage3.png?555d3e",
+    harvest_img:"https://fieldsofmistria.wiki.gg/images/Jasmine_stage4.png?1bbf65",
+    withered_img:"https://fieldsofmistria.wiki.gg/images/Rice_stalk.png?635522"
+  }
 ];
 
+/* UPDATED CARE TOOLS WITH CUSTOM IMAGE URLS */
 const CARE = [
-  {id:"greenhouse", emoji:"🏡", label:"Greenhouse", cost:100, from:"coins"},
-  {id:"water",      emoji:"💧", label:"Water",      cost:5,   from:"water"},
-  {id:"sunlight",   emoji:"☀️", label:"Sunlight",   cost:5,   from:"sun"},
-  {id:"fertilizer", emoji:"🧪", label:"Fertilize",  cost:10,  from:"fertilizer"},
-  {id:"bonemeal",   emoji:"🦴", label:"Bone Meal",  cost:15,  from:"bonemeal"},
+  {id:"greenhouse", img:"https://fieldsofmistria.wiki.gg/images/Large_white_greenhouse_blueprint.png?aafa0a", label:"Greenhouse", cost:100, from:"coins"},
+  {id:"water",      img:"https://fieldsofmistria.wiki.gg/images/Bucket_brew.png?c038c4", label:"Water", cost:5, from:"water"},
+  {id:"sunlight",   img:"https://fieldsofmistria.wiki.gg/images/Weather_icon_sunny.png?8da538", label:"Sunlight", cost:5, from:"sun"},
+  {id:"fertilizer", img:"https://fieldsofmistria.wiki.gg/images/Flour.png?b2cc9b", label:"Fertilize", cost:10, from:"fertilizer"},
+  {id:"bonemeal",   img:"https://fieldsofmistria.wiki.gg/images/Dog_treat.png?9c5f5a", label:"Bone Meal", cost:15, from:"bonemeal"},
 ];
 
 const HAZARDS = ["Super Typhoon 🌀", "Ipo-Ipo Tornado 🌪️", "Ashfall 🌋", "Amihan Frost ❄️"];
 
 const RESOURCE_META = {
-  coins:      {label:"Pera (₱)",            emoji:"₱", cls:"bg-amber-200 text-amber-900 border-amber-300"},
-  sun:        {label:"Araw (Sunlight) ☀️",   emoji:"☀️", cls:"bg-yellow-100 text-yellow-800 border-yellow-300"},
-  water:      {label:"Tubig (Water) 💧",     emoji:"💧", cls:"bg-sky-200 text-sky-900 border-sky-300"},
-  fertilizer: {label:"Pataba (Fertilizer) 🧪", emoji:"🧪", cls:"bg-lime-200 text-lime-900 border-lime-300"},
-  bonemeal:   {label:"Buto (Bone Meal) 🦴",  emoji:"🦴", cls:"bg-stone-200 text-stone-700 border-stone-300"},
+  coins:      {label:"Pera (₱)",            emoji:"₱", cls:"bg-amber-300 text-amber-950 border-amber-600"},
+  sun:        {label:"Araw (Sunlight) ☀️",   emoji:"☀️", cls:"bg-yellow-200 text-yellow-950 border-yellow-500"},
+  water:      {label:"Tubig (Water) 💧",     emoji:"💧", cls:"bg-sky-200 text-sky-950 border-sky-500"},
+  fertilizer: {label:"Pataba (Fertilizer) 🧪", emoji:"🧪", cls:"bg-emerald-200 text-emerald-950 border-emerald-500"},
+  bonemeal:   {label:"Buto (Bone Meal) 🦴",  emoji:"🦴", cls:"bg-stone-300 text-stone-900 border-stone-500"},
 };
 
 let selectedMode = null;
 let resourcesCache = {};
-const HARVEST_PAYOUT = {Sampaguita:15, Gumamela:30, "Ilang-Ilang":25, Santan:35};
+const HARVEST_PAYOUT = {
+  Lilac: 15, Tulip: 20, Marigold: 25, Sunflower: 35,
+  Celosia: 30, Chrysanthemum: 32, "Frost Lily": 45, Jasmine: 22
+};
 let vaseItems = [];
 let vaseTotal = 0;
 let historyRecords = [];
@@ -255,7 +450,9 @@ let pyodide = null;
 let hazardTimerStarted = false;
 
 function renderVase(){
-  document.getElementById('vase-list').innerHTML = vaseItems.map(e=>`<span class="text-lg" title="${e.name} +₱${e.payout}">${e.emoji}</span>`).join('') || '<span class="text-pink-300 text-[10px] italic">Wala pa</span>';
+  document.getElementById('vase-list').innerHTML = vaseItems.map(e=>
+    `<img src="${e.img}" class="w-6 h-6 object-contain inline-block" title="${e.name} +₱${e.payout}" alt="${e.name}">`
+  ).join('') || '<span class="text-amber-800 text-[10px] italic">Wala pa</span>';
   document.getElementById('vase-total').textContent = `₱${vaseTotal}`;
 }
 
@@ -280,10 +477,10 @@ function updateResources(resObj){
   const keys = ['coins', 'sun', 'water', 'fertilizer', 'bonemeal'];
   const items = keys.map(k => {
     const v = resourcesCache[k] ?? 0;
-    const m = RESOURCE_META[k] || {label:k, emoji:"", cls:"bg-stone-200 text-stone-700 border-stone-300"};
-    return `<button data-res="${k}" class="badge-btn ${m.cls} border text-xs font-bold px-2.5 py-1 rounded-full mono inline-flex items-center gap-1 hover:brightness-95 flex-shrink-0">${m.label}: ${v}</button>`;
+    const m = RESOURCE_META[k] || {label:k, emoji:"", cls:"bg-amber-200 text-amber-900 border-amber-400"};
+    return `<button data-res="${k}" class="badge-btn ${m.cls} border-2 text-xs font-bold px-2.5 py-1 rounded-full mono inline-flex items-center gap-1 hover:brightness-95 flex-shrink-0 shadow-sm">${m.label}: ${v}</button>`;
   });
-  document.getElementById('resource-bar').innerHTML = items.join('<span class="text-pink-200 font-bold px-0.5">|</span>');
+  document.getElementById('resource-bar').innerHTML = items.join('<span class="text-amber-600 font-bold px-0.5">|</span>');
   document.querySelectorAll('#resource-bar [data-res]').forEach(btn=>{
     btn.onclick = ()=> window.harvest_resource(btn.dataset.res);
   });
@@ -291,25 +488,33 @@ function updateResources(resObj){
 
 function addPlantsToDropdown(){
   document.getElementById('library-cards').innerHTML = PLANTS.map(pl => `
-    <div class="bg-white border border-pink-200 rounded-lg p-3 shadow-sm">
-      <div class="flex items-center gap-2 mb-1"><span class="text-2xl">${pl.emoji}</span><span class="font-bold text-pink-800">${pl.name}</span><span class="ml-auto text-pink-600 text-xs mono font-bold">₱${pl.cost}</span></div>
-      <div class="text-[11px] text-pink-300 mono mb-1">💧 water_need: ${pl.water}</div>
-      <div class="text-xs text-pink-700 mb-1">${pl.ability}</div>
-      <div class="text-xs text-rose-500">⚠ ${pl.weak}</div>
+    <div class="bg-amber-50 border-2 border-amber-600 rounded-lg p-3 shadow-sm flex gap-3 items-center">
+      <img src="${pl.harvest_img}" class="w-10 h-10 object-contain" alt="${pl.name}">
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-0.5"><span class="font-extrabold text-amber-900">${pl.name}</span><span class="text-[10px] bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded font-bold">${pl.season}</span><span class="ml-auto text-amber-800 text-xs mono font-bold">₱${pl.cost}</span></div>
+        <div class="text-[11px] text-amber-700 mono mb-0.5">💧 water_need: ${pl.water}</div>
+        <div class="text-xs text-amber-900 mb-0.5">${pl.ability}</div>
+        <div class="text-xs text-rose-700 font-bold">⚠ ${pl.weak}</div>
+      </div>
     </div>`).join('');
   buildToolbar();
+  renderVisualBst();
   markUnlocked(2);
 }
 
 function buildToolbar(){
   const bar = document.getElementById('toolbar');
   const seedCards = PLANTS.map(pl => `
-    <div class="toolcard bg-pink-100 border border-pink-300 rounded-lg p-2 text-center cursor-pointer shadow-sm" data-kind="seed" data-name="${pl.name}">
-      <div class="text-2xl">${pl.emoji}</div><div class="text-[10px] mono text-pink-800 font-semibold">${pl.name} · ₱${pl.cost}</div>
+    <div class="toolcard rounded-lg p-1.5 text-center cursor-pointer shadow-sm flex flex-col items-center justify-between" data-kind="seed" data-name="${pl.name}">
+      <img src="${pl.seed_img}" class="w-8 h-8 object-contain mb-0.5" alt="${pl.name}">
+      <div class="text-[9px] mono text-amber-950 font-bold truncate w-full">${pl.name}</div>
+      <div class="text-[9px] text-amber-700 font-extrabold">₱${pl.cost}</div>
     </div>`).join('');
   const careCards = CARE.map(c => `
-    <div class="toolcard bg-white border border-pink-200 rounded-lg p-2 text-center cursor-pointer shadow-sm" data-kind="care" data-id="${c.id}">
-      <div class="text-2xl">${c.emoji}</div><div class="text-[10px] mono text-pink-800 font-semibold">${c.label} · ${c.cost}</div>
+    <div class="toolcard rounded-lg p-1.5 text-center cursor-pointer shadow-sm flex flex-col items-center justify-between" data-kind="care" data-id="${c.id}">
+      <img src="${c.img}" class="w-8 h-8 object-contain mb-0.5" alt="${c.label}">
+      <div class="text-[9px] mono text-amber-950 font-bold truncate w-full">${c.label}</div>
+      <div class="text-[9px] text-amber-700 font-extrabold">${c.cost}</div>
     </div>`).join('');
   bar.innerHTML = seedCards + careCards;
   bar.querySelectorAll('.toolcard').forEach(card=>{
@@ -323,7 +528,7 @@ function buildToolbar(){
       } else {
         const c = CARE.find(x=>x.id===card.dataset.id);
         selectedMode = {type:'care', data:c};
-        banner.textContent = `${c.emoji} ${c.label} mode — tap a tile.`;
+        banner.textContent = `Care tool selected: ${c.label} — tap a tile.`;
       }
       banner.classList.remove('hidden');
     };
@@ -347,8 +552,8 @@ function popActionUI(){
 function updateClimateQueue(queueList){
   const q = queueList.toJs ? queueList.toJs() : queueList;
   document.getElementById('climate-list').innerHTML = q.map((ev,i)=>
-    `<span class="text-xs px-2 py-1 rounded-full ${i===0 ? 'bg-rose-300 text-rose-900 font-bold' : 'bg-rose-100 text-rose-600'} mono">${i===0?'▶ ':''}${ev}</span>`
-  ).join('') || '<span class="text-pink-400 italic text-xs">Walang bagyo — tahimik ang panahon.</span>';
+    `<span class="text-xs px-2.5 py-1 rounded-full ${i===0 ? 'bg-amber-400 text-amber-950 font-extrabold border border-amber-600' : 'bg-amber-200 text-amber-900 font-semibold'} mono">${i===0?'▶ ':''}${ev}</span>`
+  ).join('') || '<span class="text-amber-800 italic text-xs font-semibold">Walang bagyo — tahimik ang panahon.</span>';
   markUnlocked(2);
   scheduleNextHazard();
 }
@@ -370,6 +575,7 @@ function needBadges(pl){
   return b;
 }
 
+/* RENDER TILE WITH MOVED CARE ICONS (TOP-LEFT) */
 function renderTile(r,c){
   const el = document.querySelector(`.tile[data-row="${r}"][data-col="${c}"]`);
   if(!el) return;
@@ -377,7 +583,7 @@ function renderTile(r,c){
   const ready = !!(st && st.plant && st.plant.growth >= 100);
   
   el.style.background = ready ? '#a7f3d0' : '';
-  el.style.boxShadow = ready ? 'inset 0 2px 4px rgba(0,0,0,.1), 0 0 0 2px #059669' : '';
+  el.style.boxShadow = ready ? 'inset 0 2px 4px rgba(0,0,0,.1), 0 0 0 3px #059669' : '';
   el.style.cursor = ready ? 'pointer' : '';
 
   if(!st || (!st.plant && !st.greenhouse)){ 
@@ -386,21 +592,36 @@ function renderTile(r,c){
   }
   
   let html = '<div class="relative w-full h-full flex flex-col items-center justify-between p-1 pointer-events-none">';
+  
+  // Greenhouse structure positioned in top-left
+  if(st.greenhouse){
+    const ghTool = CARE.find(x => x.id === 'greenhouse');
+    html += `<img src="${ghTool.img}" class="absolute top-1 left-1 w-5 h-5 object-contain z-10 drop-shadow-sm" title="Protected by Greenhouse" alt="Greenhouse">`;
+  }
+
   if(st.plant){
-    const lifeEmoji = st.plant.health <= 30 ? '🪾' : (st.plant.growth < 100 ? '🌱' : st.plant.emoji);
-    const mature = st.plant.growth >= 100 && st.plant.health > 30;
-    const emojiSize = mature ? 'text-3xl sm:text-5xl' : 'text-2xl sm:text-4xl';
-    const emojiFx = mature ? 'filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));' : '';
-    html += `<div class="flex gap-0.5 justify-center h-4 items-center">${ready ? '<span class="ready-badge">✨ READY</span>' : needBadges(st.plant)}</div>
-      <div class="${emojiSize} leading-none select-none my-auto" style="${emojiFx}">${lifeEmoji}</div>
+    let plantImg = st.plant.stage0_img;
+    if(st.plant.health <= 30){
+      plantImg = st.plant.withered_img;
+    } else if(st.plant.growth >= 100){
+      plantImg = st.plant.harvest_img;
+    } else if(st.plant.growth >= 35){
+      plantImg = st.plant.stage2_img;
+    }
+    
+    // Plant needs/ready badges positioned in top-right
+    html += `<div class="absolute top-1 right-1 flex gap-0.5 justify-end z-10">${ready ? '<span class="ready-badge">✨ READY</span>' : needBadges(st.plant)}</div>
+      
+      <!-- Main Plant Image Centered -->
+      <img src="${plantImg}" class="w-8 h-8 sm:w-10 sm:h-10 object-contain my-auto select-none pt-2" alt="${st.plant.name}">
+      
+      <!-- Growth & Health Bars -->
       <div class="w-full flex flex-col gap-0.5">
         <div class="growthbar w-full" title="Growth: ${Math.floor(st.plant.growth)}%"><div class="growthfill" style="width:${Math.max(0,st.plant.growth)}%"></div></div>
         <div class="hpbar w-full" title="Health: ${Math.floor(st.plant.health)}%"><div class="hpfill" style="width:${Math.max(0,st.plant.health)}%"></div></div>
       </div>`;
   }
-  if(st.greenhouse){
-    html += `<div class="absolute inset-0 flex items-center justify-center text-xl opacity-75 select-none">🏡</div>`;
-  }
+  
   html += '</div>';
   el.innerHTML = html;
 }
@@ -414,7 +635,7 @@ function harvestTile(r,c){
   const prevPlant = {...st.plant};
   
   window.harvest_tile(r,c,payout,name);
-  vaseItems.push({emoji:prevPlant.emoji, payout, name});
+  vaseItems.push({img:prevPlant.harvest_img, payout, name});
   vaseTotal += payout;
   renderVase();
   showToast(`Na-harvest ang ${name}! +₱${payout}`);
@@ -450,7 +671,7 @@ const grid = document.getElementById('grid');
 for(let r=0;r<5;r++){
   for(let c=0;c<9;c++){
     const tile = document.createElement('div');
-    tile.className = 'tile bg-amber-200/80 hover:bg-amber-300 border border-amber-300/70 rounded aspect-square flex items-center justify-center cursor-pointer shadow-inner relative';
+    tile.className = 'tile bg-amber-200/90 hover:bg-amber-300/90 border-2 border-amber-600 rounded-lg aspect-square flex items-center justify-center cursor-pointer shadow-inner relative';
     tile.dataset.row = r; 
     tile.dataset.col = c;
     tile.onclick = ()=> onTileClick(r,c);
@@ -474,7 +695,11 @@ function onTileClick(r,c){
     if(st.plant){ showToast('May tanim na dito.'); return; }
     const pl = selectedMode.data;
     if(!window.try_spend('coins', pl.cost)){ showToast(`Kulang ang Pera! Need ₱${pl.cost}.`); return; }
-    st.plant = {name:pl.name, emoji:pl.emoji, health:100, moisture:50, sunlvl:50, nutrients:50, growth:5};
+    st.plant = {
+      name:pl.name, health:100, moisture:50, sunlvl:50, nutrients:50, growth:5,
+      stage0_img: pl.stage0_img, stage2_img: pl.stage2_img,
+      harvest_img: pl.harvest_img, withered_img: pl.withered_img
+    };
     window.plant_on_tile(r,c, pl.name, pl.water);
     renderTile(r,c);
     undoStack.push({type:'PLANT', r, c, cost:pl.cost});
@@ -516,7 +741,7 @@ function onTileClick(r,c){
         renderTile(nr,nc);
       }
     });
-    flashTiles(neighborsRaw, ['bg-amber-300/80', 'ring-2', 'ring-amber-500', 'animate-pulse']);
+    flashTiles(neighborsRaw, ['bg-purple-300/80', 'ring-2', 'ring-purple-600', 'animate-pulse']);
     logConsole(`Group Care (Graph Adjacency Matrix) applied to 8 neighboring soil tiles.`);
   }
 }
@@ -543,11 +768,10 @@ document.getElementById('process-hazard-btn').onclick = ()=>{
   window.process_hazard && window.process_hazard();
 };
 
-// PRE-POPULATED STUDENT CODE EDITOR TEMPLATES (TOPICS 1 THRU 11)
+/* PRE-POPULATED PYTHON CODE TEMPLATES FOR TOPICS 1-11 */
 const topicTemplates = {
 1: { title:"Python OOP + Big O + Stacks", unlocks:"Resource Storage & Action History Stack", code:
 `# --- [BLOCK 1: OOP Plant Class Definition] ---
-# Defines the Blueprint for all garden plants with encapsulated properties.
 class Plant:
     def __init__(self, name, water_need):
         self.name = name
@@ -556,12 +780,10 @@ class Plant:
         print(f"Plant initialized: {self.name} (water_need={self.water_need}, health={self.health})")
 
 # --- [BLOCK 2: Initial Resource Dictionary] ---
-# Stores player resources in a O(1) key-value dictionary map.
 resources = {"coins": 200, "sun": 100, "water": 100, "fertilizer": 50, "bonemeal": 30}
 HARVEST_AMOUNTS = {"coins":10, "sun":20, "water":20, "fertilizer":10, "bonemeal":5}
 
 # --- [BLOCK 3: Resource Deduction Helper Function] ---
-# Spends resources if sufficient amount is available, executing in O(1) time complexity.
 def try_spend(key, amount):
     if resources.get(key, 0) < amount:
         return False
@@ -570,7 +792,6 @@ def try_spend(key, amount):
     return True
 
 # --- [BLOCK 4: Resource Harvest & Refund Handlers] ---
-# Modifies dictionary values and synchronizes changes with the JavaScript web UI.
 def harvest(key):
     resources[key] = resources.get(key, 0) + HARVEST_AMOUNTS.get(key, 10)
     updateResources(resources)
@@ -587,51 +808,38 @@ updateResources(resources)
 print("Topic 1 OOP Class & Attributes Executed Successfully!")
 `},
 2: { title:"Queues & Deques (FIFO Elements)", unlocks:"Ulat Panahon Climate Queue & Seed Bag", code:
-`# --- [BLOCK 1: Importing collections.deque for O(1) FIFO Queue Operations] ---
-from collections import deque
+`from collections import deque
 
-# --- [BLOCK 2: FIFO Climate Queue Data Structure Class] ---
-# Manages climate events (disasters) sequentially using First-In-First-Out ordering.
 class ClimateQueue:
     def __init__(self):
         self.queue = deque()
     
-    # Enqueues a disaster to the end of the queue in O(1) time complexity
     def add_challenge(self, event_name):
         self.queue.append(event_name)
     
-    # Dequeues and processes the oldest hazard from the front in O(1) time complexity
     def process_hazard(self):
         if not self.is_empty():
             return self.queue.popleft()
         return None
     
-    # Checks if the climate queue contains any pending disasters
     def is_empty(self):
         return len(self.queue) == 0
 
-# --- [BLOCK 3: Instantiating and Pre-populating the Climate Queue] ---
 climate_q = ClimateQueue()
 climate_q.add_challenge("Super Typhoon 🌀")
 climate_q.add_challenge("Ipo-Ipo Tornado 🌪️")
 climate_q.add_challenge("Amihan Frost ❄️")
 
-# Syncs queue elements with the Web UI display
 updateClimateQueue(list(climate_q.queue))
 addPlantsToDropdown()
 print("Topic 2 FIFO ClimateQueue Executed Successfully!")
 `},
 3: { title:"Static/Dynamic Arrays, 2D Lists, & Memory Structures", unlocks:"2D Garden Matrix Mapping (5x9)", code:
-`# --- [BLOCK 1: 2D Matrix Spatial Storage Dictionary] ---
-# Maps (row, column) coordinate tuples to plant object instances dynamically.
-field = {}
+`field = {}
 
-# --- [BLOCK 2: Matrix Cell Mutation Methods] ---
-# Removes plant reference from the spatial grid in O(1) average lookup time.
 def remove_plant(r, c):
     field.pop((r, c), None)
 
-# Re-instantiates and places a plant into the matrix coordinate (used by undo engine).
 def restore_plant(r, c, name, water, health):
     p = Plant(name, water)
     p.health = health
@@ -640,29 +848,30 @@ def restore_plant(r, c, name, water, health):
 print("Topic 3 Static/Dynamic Arrays & 2D Matrix Executed Successfully!")
 `},
 4: { title:"Hierarchical Trees & Traversals", unlocks:"Plant Family Tree UI View", code:
-`# --- [BLOCK 1: Tree Node Definition for Hierarchical Data] ---
-# Represents each entity node in a hierarchical non-linear tree data structure.
-class TreeNode:
+`class TreeNode:
     def __init__(self, label):
         self.label = label
         self.children = []
     
-    # Appends child branches under the current tree node
     def add_child(self, node):
         self.children.append(node)
         return node
 
-# --- [BLOCK 2: Building the Garden Taxonomy Tree] ---
 root = TreeNode("Halamanan")
-ornamental = root.add_child(TreeNode("Palamuti (Ornamental)"))
-fragrant = root.add_child(TreeNode("Mabango (Fragrant)"))
-ornamental.add_child(TreeNode("Sampaguita 🌼"))
-ornamental.add_child(TreeNode("Santan 🏵️"))
-fragrant.add_child(TreeNode("Ilang-Ilang 🌸"))
-fragrant.add_child(TreeNode("Gumamela 🌺"))
+spring = root.add_child(TreeNode("Spring Flowers"))
+summer = root.add_child(TreeNode("Summer Flowers"))
+fall   = root.add_child(TreeNode("Fall Flowers"))
+winter = root.add_child(TreeNode("Winter Flowers"))
 
-# --- [BLOCK 3: Depth-First Recursive Tree Traversal] ---
-# Traverses tree nodes top-down and formats visual tree branch indentation strings.
+spring.add_child(TreeNode("Lilac 🌸"))
+spring.add_child(TreeNode("Tulip 🌷"))
+summer.add_child(TreeNode("Marigold 🌼"))
+summer.add_child(TreeNode("Sunflower 🌻"))
+fall.add_child(TreeNode("Celosia 🪻"))
+fall.add_child(TreeNode("Chrysanthemum 🌺"))
+winter.add_child(TreeNode("Frost Lily ❄️"))
+winter.add_child(TreeNode("Jasmine 🪷"))
+
 def traverse(node, depth=0):
     lines = ["  " * depth + "└─ " + node.label]
     for child in node.children:
@@ -672,10 +881,8 @@ def traverse(node, depth=0):
 tree_text = "\\n".join(traverse(root))
 print("Topic 4 Hierarchical Tree & Traversal Executed Successfully!")
 `},
-5: { title:"Binary Search Trees (BST) & Node Mutation", unlocks:"BST Price Search & Action History Stack", code:
-`# --- [BLOCK 1: Action History LIFO Stack Class] ---
-# Implements Last-In-First-Out stack mechanics for action tracking and undo features.
-class ActionHistoryStack:
+5: { title:"Binary Search Trees (BST) & Node Mutation", unlocks:"BST Price Search & Visual Representation", code:
+`class ActionHistoryStack:
     def __init__(self):
         self.stack = []
     def push_action(self, action_string):
@@ -690,28 +897,6 @@ class ActionHistoryStack:
 
 action_stack = ActionHistoryStack()
 
-# --- [BLOCK 2: Snapshot State Class for Deep Undo Engine] ---
-# Stores immutable snapshots of player actions for total state rollback operations.
-class GameSnapshot:
-    def __init__(self, action_type, row, col, details):
-        self.action_type = action_type
-        self.row = row
-        self.col = col
-        self.details = details
-
-class DeepUndoEngine:
-    def __init__(self):
-        self.snapshots = []
-    def record_snapshot(self, snapshot):
-        self.snapshots.append(snapshot)
-    def rollback_last(self):
-        if self.snapshots:
-            return self.snapshots.pop()
-        return None
-
-undo_engine = DeepUndoEngine()
-
-# --- [BLOCK 3: Binary Search Tree (BST) Node Definition] ---
 class BSTNode:
     def __init__(self, cost, name):
         self.cost = cost
@@ -719,13 +904,10 @@ class BSTNode:
         self.left = None
         self.right = None
 
-# --- [BLOCK 4: Binary Search Tree Class Implementation] ---
-# Organizes plants by numeric cost key in O(log n) search complexity.
 class PlantBST:
     def __init__(self):
         self.root = None
     
-    # Public method to insert a cost-value node into the tree
     def insert(self, cost, name):
         self.root = self._insert(self.root, cost, name)
         
@@ -740,7 +922,6 @@ class PlantBST:
             node.name = name
         return node
         
-    # Searches BST nodes in logarithmic time O(log n)
     def search(self, cost):
         node, steps = self.root, 0
         while node is not None:
@@ -751,24 +932,20 @@ class PlantBST:
         return (None, steps)
 
 plant_bst = PlantBST()
-for cost, name in [(25, "Sampaguita"), (50, "Gumamela"), (40, "Ilang-Ilang"), (60, "Santan")]:
+for cost, name in [(25,"Lilac"), (35,"Tulip"), (40,"Jasmine"), (45,"Marigold"), (50,"Celosia"), (55,"Chrysanthemum"), (60,"Sunflower"), (70,"Frost Lily")]:
     plant_bst.insert(cost, name)
 
-print("Topic 5 Binary Search Tree & Deep Undo Engine Executed Successfully!")
+print("Topic 5 Binary Search Tree Executed Successfully!")
 `},
 6: { title:"Hash Tables, Collisions, & Rehashing", unlocks:"Quick Lookup (Hash Table) in Library", code:
-`# --- [BLOCK 1: Simple Hash Table Class Implementation] ---
-# Demonstrates custom hash table lookup with collision chaining buckets.
-class SimpleHashTable:
+`class SimpleHashTable:
     def __init__(self, size=8):
         self.size = size
         self.buckets = [[] for _ in range(size)]
     
-    # Hashes string key via ASCII summation modulo bucket size
     def _hash(self, key):
         return sum(ord(ch) for ch in key) % self.size
     
-    # Inserts or updates key-value pair in corresponding hash bucket
     def put(self, key, value):
         idx = self._hash(key)
         bucket = self.buckets[idx]
@@ -778,37 +955,33 @@ class SimpleHashTable:
                 return
         bucket.append((key, value))
     
-    # Retrieves entry in O(1) expected time complexity
     def get(self, key):
         for k, v in self.buckets[self._hash(key)]:
             if k == key:
                 return v
         return None
 
-# --- [BLOCK 2: Populating Plant Hash Table] ---
 plant_hash = SimpleHashTable()
-plant_hash.put("Sampaguita", "₱25 · water_need 10")
-plant_hash.put("Gumamela", "₱50 · water_need 15")
-plant_hash.put("Ilang-Ilang", "₱40 · water_need 12")
-plant_hash.put("Santan", "₱60 · water_need 18")
+plant_hash.put("Lilac", "₱25 · water_need 10")
+plant_hash.put("Tulip", "₱35 · water_need 12")
+plant_hash.put("Marigold", "₱45 · water_need 14")
+plant_hash.put("Sunflower", "₱60 · water_need 18")
+plant_hash.put("Celosia", "₱50 · water_need 15")
+plant_hash.put("Chrysanthemum", "₱55 · water_need 16")
+plant_hash.put("Frost Lily", "₱70 · water_need 20")
+plant_hash.put("Jasmine", "₱40 · water_need 12")
 
-print("Topic 6 Hash Tables & Collision Resolution Executed Successfully!")
+print("Topic 6 Hash Tables Executed Successfully!")
 `},
 7: { title:"Graph Foundations, Adjacency Matrices/Lists, & DFS/BFS", unlocks:"Group Care 3x3 Area Action Trigger", code:
-`# --- [BLOCK 1: Graph Adjacency Neighbor Lookup] ---
-# Treats grid tiles as undirected graph vertices connected to adjacent neighbor nodes.
-def neighbors_of(r, c, rows=5, cols=9):
-    # Generates relative coordinate offsets for 3x3 grid neighborhood
+`def neighbors_of(r, c, rows=5, cols=9):
     candidates = [(r+dr, c+dc) for dr in (-1,0,1) for dc in (-1,0,1) if not (dr==0 and dc==0)]
-    # Filters out-of-bounds coordinates to maintain graph validity
     return [(rr,cc) for rr,cc in candidates if 0 <= rr < rows and 0 <= cc < cols]
 
-print("Topic 7 Graph Foundations & Adjacency Operations Executed Successfully!")
+print("Topic 7 Graph Foundations Executed Successfully!")
 `},
-8: { title:"Sorting Algorithms (Bubble, Insertion, Selection, Quick, & Merge Sort)", unlocks:"Quicksort Flower Vase Sorting", code:
-`# --- [BLOCK 1: Quicksort Algorithm Implementation] ---
-# Divide-and-conquer sorting technique with O(n log n) average time complexity.
-def quicksort(items, key=lambda x: x):
+8: { title:"Sorting Algorithms (Quicksort, Merge, Insertion)", unlocks:"Quicksort Flower Vase Sorting", code:
+`def quicksort(items, key=lambda x: x):
     if len(items) <= 1:
         return items
     pivot = key(items[len(items)//2])
@@ -817,17 +990,13 @@ def quicksort(items, key=lambda x: x):
     lower  = [x for x in items if key(x) < pivot]
     return quicksort(higher, key) + equal + quicksort(lower, key)
 
-# --- [BLOCK 2: Flower Vase Sorting Handler] ---
-# Sorts harvested vase items by payout value descending.
 def sort_vase(vase_entries):
     return quicksort(vase_entries, key=lambda e: e[1])
 
 print("Topic 8 Quicksort Algorithm Executed Successfully!")
 `},
-9: { title:"Searching Algorithms (Linear Search vs. Binary Search)", unlocks:"Action History Linear Search", code:
-`# --- [BLOCK 1: Linear Search Algorithm Implementation] ---
-# Sequentially inspects history records in O(n) worst-case time complexity.
-def linear_search(records, keyword):
+9: { title:"Searching Algorithms (Linear Search vs Binary Search)", unlocks:"Action History Linear Search", code:
+`def linear_search(records, keyword):
     steps, matches = 0, []
     for entry in records:
         steps += 1
@@ -837,18 +1006,13 @@ def linear_search(records, keyword):
 
 print("Topic 9 Searching Algorithms Executed Successfully!")
 `},
-10: { title:"Advanced Strategic Paradigms (Dijkstra’s Algorithm & Greedy Patterns)", unlocks:"Irrigation Path Action Trigger", code:
-`# --- [BLOCK 1: Manhattan Distance Metric Helper] ---
-# Calculates grid distance between two coordinate tuples.
-def manhattan(a, b):
+10: { title:"Advanced Strategic Paradigms (Greedy Pathfinding)", unlocks:"Irrigation Path Action Trigger", code:
+`def manhattan(a, b):
     return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
-# --- [BLOCK 2: Greedy Route Pathfinding Algorithm] ---
-# Greedy heuristic algorithm selecting nearest target cell sequentially.
 def greedy_route(start, targets):
     route, current, remaining, total_cost = [], start, list(targets), 0
     while remaining:
-        # Sorts remaining targets based on distance to current location
         remaining.sort(key=lambda t: manhattan(current, t))
         nxt = remaining.pop(0)
         total_cost += manhattan(current, nxt)
@@ -856,24 +1020,19 @@ def greedy_route(start, targets):
         current = nxt
     return (route, total_cost)
 
-print("Topic 10 Greedy Strategic Paradigms & Pathfinding Executed Successfully!")
+print("Topic 10 Greedy Pathfinding Executed Successfully!")
 `},
-11: { title:"Dynamic Programming (DP), Memoization, & Divide-and-Conquer", unlocks:"Golden Plan-ter Action Trigger", code:
-`# --- [BLOCK 1: Unbounded Knapsack Dynamic Programming Algorithm] ---
-# Finds optimal crop combination for max payout within budget using memoized DP array.
-def best_planting_plan(budget, catalog):
-    # Initializes bottom-up memoization DP array
+11: { title:"Dynamic Programming (DP Knapsack & Memoization)", unlocks:"Golden Plan-ter Action Trigger", code:
+`def best_planting_plan(budget, catalog):
     dp = [0] * (budget + 1)
     choice = [None] * (budget + 1)
     
-    # Computes maximum value obtainable for each sub-budget
     for b in range(1, budget + 1):
         for name, cost, payout in catalog:
             if cost <= b and dp[b - cost] + payout > dp[b]:
                 dp[b] = dp[b - cost] + payout
                 choice[b] = name
                 
-    # Reconstructs selected item combination count
     combo, b = {}, budget
     while b > 0 and choice[b]:
         name = choice[b]
@@ -899,8 +1058,8 @@ function refreshLockBanner(key){
   const banner = document.getElementById('lock-banner');
   const text = document.getElementById('lock-text');
   const isUnlocked = unlocked.has(key);
-  banner.className = (isUnlocked ? 'unlockbanner' : 'lockbanner') + ' text-xs font-semibold rounded-lg px-3 py-2 mb-2 flex items-center gap-2';
-  text.textContent = isUnlocked ? `Status: Unlocked ✅ — ${t.unlocks}` : `Status: Locked (Run Python code to unlock: ${t.unlocks})`;
+  banner.className = (isUnlocked ? 'unlockbanner' : 'lockbanner') + ' text-xs font-bold rounded-lg px-3 py-2 mb-2 flex items-center gap-2';
+  text.textContent = isUnlocked ? `Status: Unlocked ✅ — ${t.unlocks}` : `Status: Locked (Run code to unlock: ${t.unlocks})`;
 }
 
 function switchTab(tab){
@@ -909,9 +1068,11 @@ function switchTab(tab){
   document.getElementById('view-code').classList.toggle('flex', tab === 'code');
   ['game','code'].forEach(t=>{
     const btn = document.getElementById(`tab-${t}`);
-    btn.classList.toggle('bg-pink-100', t===tab);
-    btn.classList.toggle('text-pink-700', t===tab);
-    btn.classList.toggle('text-pink-400', t!==tab);
+    if(t===tab){
+      btn.className = "px-4 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5 bg-amber-500 text-white shadow";
+    } else {
+      btn.className = "px-4 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5 text-amber-800 hover:bg-amber-300/50";
+    }
   });
 }
 
@@ -1033,6 +1194,31 @@ async function runPythonCode(){
   }
 }
 
+async function runAllPythonCodes(){
+  const out = document.getElementById('editor-output');
+  out.innerHTML = '';
+  logEditor('🚀 Running all Topic codes sequentially...');
+  try{
+    await initPyodide();
+    for(let i = 1; i <= 11; i++){
+      const topicData = topicTemplates[i];
+      if(topicData){
+        logEditor(`Running Topic ${i}: ${topicData.title}...`);
+        await pyodide.runPythonAsync(topicData.code);
+        unlockFeature(i);
+        if(i === 4){
+          const treeText = pyodide.globals.get('tree_text');
+          if(treeText) document.getElementById('tree-output').textContent = treeText;
+        }
+      }
+    }
+    loadTopic();
+    showToast("🎉 All Topics executed & features unlocked!");
+  } catch(err){
+    logEditor('Error during batch execution: ' + err.message);
+  }
+}
+
 function unlockFeature(n){
   markUnlocked(n);
   const el = document.getElementById(`topic${n}-ui`);
@@ -1047,7 +1233,7 @@ function flashTiles(coords, extraClasses, ms=2200, badgeTexts=null){
     let badgeEl = null;
     if(badgeTexts && badgeTexts[i]){
       badgeEl = document.createElement('div');
-      badgeEl.className = 'absolute -top-2 -right-1 text-[9px] bg-white/95 rounded-full px-1 font-bold text-emerald-700 z-10 border border-emerald-400 shadow-sm';
+      badgeEl.className = 'absolute -top-2 -right-1 text-[9px] bg-amber-100 rounded-full px-1 font-extrabold text-amber-900 z-10 border border-amber-600 shadow-sm';
       badgeEl.textContent = badgeTexts[i];
       el.appendChild(badgeEl);
     }
@@ -1065,6 +1251,84 @@ function bstSearch(){
   document.getElementById('bst-result').textContent = name
     ? `Found: ${name} (in ${steps} step${steps===1?'':'s'})`
     : `No plant costs ₱${cost} (checked ${steps} step${steps===1?'':'s'})`;
+  
+  document.querySelectorAll('.bst-node').forEach(node=>{
+    node.classList.remove('active-node');
+    if(node.dataset.cost == cost){
+      node.classList.add('active-node');
+    }
+  });
+}
+
+function renderVisualBst(){
+  const container = document.getElementById('bst-visual-container');
+  container.innerHTML = `
+    <div class="flex flex-col items-center gap-2">
+      <!-- Root Node -->
+      <div class="bst-node" data-cost="45" data-name="Marigold">Root: 🌼 Marigold (₱45)</div>
+      <div class="w-full flex justify-between gap-4 sm:gap-12 pt-1 border-t-2 border-dashed border-amber-500">
+        <!-- Left Subtree -->
+        <div class="flex flex-col items-center gap-2">
+          <div class="bst-node" data-cost="25" data-name="Lilac">🌸 Lilac (₱25)</div>
+          <div class="w-full flex justify-between gap-2 pt-1 border-t-2 border-dashed border-amber-500">
+            <div class="bst-node" data-cost="35" data-name="Tulip">🌷 Tulip (₱35)</div>
+            <div class="bst-node" data-cost="40" data-name="Jasmine">🪷 Jasmine (₱40)</div>
+          </div>
+        </div>
+        <!-- Right Subtree -->
+        <div class="flex flex-col items-center gap-2">
+          <div class="bst-node" data-cost="55" data-name="Chrysanthemum">🌺 Chrysanthemum (₱55)</div>
+          <div class="w-full flex justify-between gap-2 pt-1 border-t-2 border-dashed border-amber-500">
+            <div class="bst-node" data-cost="50" data-name="Celosia">🪻 Celosia (₱50)</div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="bst-node" data-cost="60" data-name="Sunflower">🌻 Sunflower (₱60)</div>
+              <div class="bst-node" data-cost="70" data-name="Frost Lily">❄️ Frost Lily (₱70)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function runBstTraversal(type){
+  const out = document.getElementById('traversal-output');
+  out.classList.remove('hidden');
+  let order = [];
+  
+  if(type === 'inorder'){
+    order = [
+      {cost:25, name:"Lilac"}, {cost:35, name:"Tulip"}, {cost:40, name:"Jasmine"},
+      {cost:45, name:"Marigold"}, {cost:50, name:"Celosia"}, {cost:55, name:"Chrysanthemum"},
+      {cost:60, name:"Sunflower"}, {cost:70, name:"Frost Lily"}
+    ];
+    out.textContent = "In-Order Traversal (Sorted Cost): " + order.map(i=>`${i.name} (₱${i.cost})`).join(" ➔ ");
+  } else if(type === 'preorder'){
+    order = [
+      {cost:45, name:"Marigold"}, {cost:25, name:"Lilac"}, {cost:35, name:"Tulip"}, {cost:40, name:"Jasmine"},
+      {cost:55, name:"Chrysanthemum"}, {cost:50, name:"Celosia"}, {cost:60, name:"Sunflower"}, {cost:70, name:"Frost Lily"}
+    ];
+    out.textContent = "Pre-Order Traversal (Root ➔ Left ➔ Right): " + order.map(i=>`${i.name} (₱${i.cost})`).join(" ➔ ");
+  } else if(type === 'postorder'){
+    order = [
+      {cost:40, name:"Jasmine"}, {cost:35, name:"Tulip"}, {cost:25, name:"Lilac"},
+      {cost:50, name:"Celosia"}, {cost:70, name:"Frost Lily"}, {cost:60, name:"Sunflower"},
+      {cost:55, name:"Chrysanthemum"}, {cost:45, name:"Marigold"}
+    ];
+    out.textContent = "Post-Order Traversal (Left ➔ Right ➔ Root): " + order.map(i=>`${i.name} (₱${i.cost})`).join(" ➔ ");
+  }
+
+  order.forEach((item, idx)=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.bst-node').forEach(node=>{
+        if(node.dataset.cost == item.cost){
+          node.classList.add('active-node');
+        } else {
+          node.classList.remove('active-node');
+        }
+      });
+    }, idx * 500);
+  });
 }
 
 function hashLookup(){
@@ -1076,11 +1340,11 @@ function hashLookup(){
 
 function sortVase(){
   if(vaseItems.length === 0){ showToast('Wala pang naaning bulaklak.'); return; }
-  const entries = JSON.stringify(vaseItems.map(v=>[v.emoji, v.payout, v.name]));
+  const entries = JSON.stringify(vaseItems.map(v=>[v.img, v.payout, v.name]));
   const sorted = pyodide.runPython(`sort_vase(${entries})`).toJs();
-  vaseItems = sorted.map(([emoji,payout,name])=>({emoji,payout,name}));
+  vaseItems = sorted.map(([img,payout,name])=>({img,payout,name}));
   renderVase();
-  showToast('Vase sorted by highest earner!');
+  showToast('Vase sorted by highest payout!');
 }
 
 function searchHistory(){
